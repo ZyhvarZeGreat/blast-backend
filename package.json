@@ -1,11 +1,13 @@
 {
   "name": "blast-backend",
   "version": "1.0.0",
-  "main": "index.mjs",
+  "type": "module",
+  "main": "api/l2-balances.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.mjs",
-    "dev": "nodemon index.mjs"
+    "start": "node api/l2-balances.js",
+    "dev": "nodemon api/l2-balances.js",
+    "build": "echo 'Building for Vercel'"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +17,7 @@
     "express": "^4.21.2"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "@vercel/node": "^2.15.3"
   }
 }
