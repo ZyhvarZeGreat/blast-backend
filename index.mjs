@@ -1,8 +1,6 @@
-const express = require('express');
-const axios = require('axios');
-const router = express.Router();
+import axios from 'axios';
 
-router.get('/l2-balances', async (req, res) => {
+export default async function handler(req, res) {
     const { walletAddress } = req.query;
 
     if (!walletAddress) {
@@ -20,13 +18,4 @@ router.get('/l2-balances', async (req, res) => {
         console.error('Proxy error:', error);
         res.status(500).json({ error: 'Failed to fetch balances' });
     }
-});
-
-const app = express();
-const PORT = process.env.PORT || 3000; // Common pattern: use environment variable or default to 3000
-
-app.use(router);
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+}
