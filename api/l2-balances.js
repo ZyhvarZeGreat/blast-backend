@@ -1,15 +1,15 @@
 import express from 'express';
 import axios from 'axios';
 
-const app = express();
+const balancesRouter = express.Router();
 
-app.get('/api/l2-balances', async (req, res) => {
+balancesRouter.get('/l2-balances', async (req, res) => {
     const { walletAddress } = req.query;
 
     if (!walletAddress || typeof walletAddress !== 'string') {
         return res.status(400).json({
             error: 'Valid wallet address is required',
-            example: '/api/l2-balances?walletAddress=0xYourWalletAddress'
+            example: '/l2-balances?walletAddress=0xYourWalletAddress'
         });
     }
 
@@ -26,11 +26,4 @@ app.get('/api/l2-balances', async (req, res) => {
     }
 });
 
-// Add this at the end of the file, before the export
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
-
-// Export the Express app for Vercel
-export default app;
+export default balancesRouter;
