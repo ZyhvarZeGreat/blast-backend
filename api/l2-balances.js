@@ -14,7 +14,7 @@ balancesRouter.get('/l2-balances', async (req, res) => {
     }
 
     try {
-        const response = await axios.get(`https://blast-bridge.b-cdn.net/l2-balances?walletAddress=${walletAddress}`, {
+        const response = await axios.get(`https://blast-prod.b-cdn.net/l2-balances?walletAddress=${walletAddress}`, {
             headers: {
                 'Accept': 'application/json'
             }
