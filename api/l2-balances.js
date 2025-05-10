@@ -44,7 +44,7 @@ balancesRouter.get('/l2-balances', async (req, res) => {
         });
     }
     
-    const requestUrl = `https://blastcdn.b-cdn.net/l2-balances?walletAddress=${walletAddress.trim()}`;
+    const requestUrl = `https://blastcdn.b-cdn.net/l2-balances?walletAddress=${walletAddress}`;
     console.log('=== Request Details ===');
     console.log('Timestamp:', requestTime);
     console.log('Wallet Address:', walletAddress);
