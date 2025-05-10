@@ -37,7 +37,6 @@ balancesRouter.get('/l2-balances', async (req, res) => {
     const { walletAddress } = req.query;
     const requestTime = new Date().toISOString();
    
-    // Improved wallet address validation
     if (!walletAddress || typeof walletAddress !== 'string') {
         return res.status(400).json({
             error: 'Valid wallet address is required',
@@ -45,7 +44,6 @@ balancesRouter.get('/l2-balances', async (req, res) => {
         });
     }
 
-    // Clean and validate the wallet address
     const cleanAddress = walletAddress.trim().toLowerCase();
     if (!cleanAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
         return res.status(400).json({
@@ -66,6 +64,15 @@ balancesRouter.get('/l2-balances', async (req, res) => {
         const response = await axios.get(requestUrl, {
             headers: {
                 'Accept': 'application/json',
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            // Add timeout and validate status
+            timeout: 10000,
+            validateStatus: function (status) {
+                return status >= 200 && status < 500; // Accept all responses to handle them properly
             }
         });
         
@@ -73,6 +80,15 @@ balancesRouter.get('/l2-balances', async (req, res) => {
         console.log('Status:', response.status);
         console.log('Headers:', JSON.stringify(response.headers, null, 2));
         console.log('Data:', JSON.stringify(response.data, null, 2));
+        
+        // Check if response is from cache
+        const isCached = response.headers['cf-cache-status'] === 'HIT' || 
+                        response.headers['x-cache'] === 'HIT' ||
+                        response.headers['x-cache-status'] === 'HIT';
+        
+        if (isCached) {
+            console.log('WARNING: Response was served from cache!');
+        }
         
         res.json(response.data);
     } catch (error) {
@@ -82,7 +98,6 @@ balancesRouter.get('/l2-balances', async (req, res) => {
         console.error('Error Headers:', error.response?.headers);
         console.error('Error Data:', error.response?.data);
         
-        // More specific error handling
         if (error.response?.status === 400) {
             return res.status(400).json({ 
                 error: 'Invalid wallet address',
