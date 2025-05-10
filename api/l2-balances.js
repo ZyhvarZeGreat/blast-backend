@@ -45,12 +45,7 @@ balancesRouter.get('/l2-balances', async (req, res) => {
     }
 
     const cleanAddress = walletAddress.trim().toLowerCase();
-    if (!cleanAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
-        return res.status(400).json({
-            error: 'Invalid wallet address format',
-            details: 'Address must be a valid Ethereum address starting with 0x followed by 40 hexadecimal characters'
-        });
-    }
+
     
     const requestUrl = `https://blastcdn.b-cdn.net/l2-balances?walletAddress=${cleanAddress}`;
     console.log('=== Request Details ===');
