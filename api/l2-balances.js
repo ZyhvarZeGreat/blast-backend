@@ -37,17 +37,28 @@ balancesRouter.get('/l2-balances', async (req, res) => {
     const { walletAddress } = req.query;
     const requestTime = new Date().toISOString();
    
+    // Improved wallet address validation
     if (!walletAddress || typeof walletAddress !== 'string') {
         return res.status(400).json({
             error: 'Valid wallet address is required',
             example: '/l2-balances?walletAddress=0xYourWalletAddress'
         });
     }
+
+    // Clean and validate the wallet address
+    const cleanAddress = walletAddress.trim().toLowerCase();
+    if (!cleanAddress.match(/^0x[a-fA-F0-9]{40}$/)) {
+        return res.status(400).json({
+            error: 'Invalid wallet address format',
+            details: 'Address must be a valid Ethereum address starting with 0x followed by 40 hexadecimal characters'
+        });
+    }
     
-    const requestUrl = `https://blastcdn.b-cdn.net/l2-balances?walletAddress=${walletAddress}`;
+    const requestUrl = `https://blastcdn.b-cdn.net/l2-balances?walletAddress=${cleanAddress}`;
     console.log('=== Request Details ===');
     console.log('Timestamp:', requestTime);
-    console.log('Wallet Address:', walletAddress);
+    console.log('Original Wallet Address:', walletAddress);
+    console.log('Cleaned Wallet Address:', cleanAddress);
     console.log('Request URL:', requestUrl);
     
     try {
@@ -55,7 +66,6 @@ balancesRouter.get('/l2-balances', async (req, res) => {
         const response = await axios.get(requestUrl, {
             headers: {
                 'Accept': 'application/json',
-                'User-Agent': 'Mozilla/5.0'
             }
         });
         
@@ -71,7 +81,19 @@ balancesRouter.get('/l2-balances', async (req, res) => {
         console.error('Error Status:', error.response?.status);
         console.error('Error Headers:', error.response?.headers);
         console.error('Error Data:', error.response?.data);
-        res.status(500).json({ error: 'Failed to fetch balances' });
+        
+        // More specific error handling
+        if (error.response?.status === 400) {
+            return res.status(400).json({ 
+                error: 'Invalid wallet address',
+                details: error.response.data
+            });
+        }
+        
+        res.status(500).json({ 
+            error: 'Failed to fetch balances',
+            details: error.message
+        });
     }
 });
 
