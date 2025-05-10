@@ -4,7 +4,7 @@ import balancesRouter from './api/l2-balances.js';
 import cors from 'cors';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
